@@ -16,7 +16,9 @@ import {
   Calendar,
   Clock,
   CheckCircle2,
-  X
+  X,
+  ShieldCheck,
+  BrainCircuit
 } from 'lucide-react';
 
 // --- Components ---
@@ -35,13 +37,13 @@ const SavvyLogo = ({ className = "", onClick }: { className?: string, onClick?: 
   </button>
 );
 
-const Navbar = ({ onContactClick, onHomeClick }: { onContactClick: () => void, onHomeClick: () => void }) => (
+const Navbar = ({ onContactClick, onHomeClick, onPillarClick }: { onContactClick: () => void, onHomeClick: () => void, onPillarClick: (id: number) => void }) => (
   <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 md:px-12 flex justify-between items-center bg-black/40 backdrop-blur-md border-b border-white/5">
     <SavvyLogo onClick={onHomeClick} />
     <div className="hidden md:flex space-x-10 text-[10px] font-bold tracking-[0.3em] text-zinc-500">
-      <button onClick={onHomeClick} className="hover:text-white hover:translate-y-[-1px] transition-all outline-none uppercase">Foundation</button>
-      <button onClick={onHomeClick} className="hover:text-white hover:translate-y-[-1px] transition-all outline-none uppercase">Heart</button>
-      <button onClick={onHomeClick} className="hover:text-white hover:translate-y-[-1px] transition-all outline-none uppercase">Future</button>
+      <button onClick={() => onPillarClick(0)} className="hover:text-white hover:translate-y-[-1px] transition-all outline-none uppercase">Foundation</button>
+      <button onClick={() => onPillarClick(1)} className="hover:text-white hover:translate-y-[-1px] transition-all outline-none uppercase">Heart</button>
+      <button onClick={() => onPillarClick(2)} className="hover:text-white hover:translate-y-[-1px] transition-all outline-none uppercase">Future</button>
     </div>
     <button 
       onClick={onContactClick}
@@ -55,7 +57,7 @@ const Navbar = ({ onContactClick, onHomeClick }: { onContactClick: () => void, o
 // --- Landing Page Sections ---
 
 const Hero = ({ scrollY, onContactClick }: { scrollY: number, onContactClick: () => void }) => (
-  <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-32 pb-32 text-center overflow-hidden">
+  <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 pt-32 pb-20 text-center overflow-hidden">
     <div 
       className="parallax-element absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-blue-600/5 rounded-full blur-[150px] pointer-events-none"
       style={{ transform: `translate(-50%, calc(-50% + ${scrollY * 0.1}px))` }}
@@ -108,184 +110,180 @@ const Hero = ({ scrollY, onContactClick }: { scrollY: number, onContactClick: ()
   </section>
 );
 
-const PillarOne = () => (
-  <section id="pillar-1" className="py-32 px-6 bg-zinc-950/50">
-    <div className="max-w-6xl mx-auto">
-      <div className="pillar-title mb-6">PILLAR 01: FOUNDATION</div>
-      <div className="mb-20">
-        <h2 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">IT Support</h2>
-        <p className="text-xl md:text-2xl font-serif italic text-zinc-500 tracking-wide">Refined & Humanized</p>
-      </div>
-      
-      <p className="text-xl text-zinc-400 max-w-2xl mb-24 leading-relaxed font-light tracking-wide">
-        Technical excellence for everyone. We eliminate friction so you can focus on what matters most.
-      </p>
+// --- Consolidated Pillar Navigation ---
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
-        <div className="space-y-12">
-          <div className="flex items-center space-x-4 border-b border-white/5 pb-4">
-            <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-blue-400">Individual</h3>
-          </div>
-          <div className="space-y-10">
-            {[
-              { title: "Home Office Setup", desc: "Executive-level productivity environments for your residence." },
-              { title: "Device Security", desc: "Protecting your personal data across mobile and desktop devices." },
-              { title: "Personal IT Concierge", desc: "Direct access to technical assistance for any personal project." }
-            ].map((item, i) => (
-              <div key={i} className="group relative pl-8 py-2">
-                <div className="absolute left-0 top-0 h-full w-px bg-zinc-800 group-hover:bg-blue-400 transition-colors"></div>
-                <h4 className="font-bold text-xl mb-3 group-hover:text-blue-100 transition-colors tracking-tight">{item.title}</h4>
-                <p className="text-zinc-500 text-lg leading-[1.7] tracking-wide font-light">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+const PillarNavigation = ({ activePillar, setActivePillar }: { activePillar: number, setActivePillar: (id: number) => void }) => {
+  const pillars = [
+    { id: 0, name: "Foundation", icon: <ShieldCheck className="w-6 h-6" />, color: "text-blue-400", bg: "bg-blue-500/10", border: "hover:border-blue-500/30", activeBorder: "border-blue-500" },
+    { id: 1, name: "Heart", icon: <Heart className="w-6 h-6" />, color: "text-pink-400", bg: "bg-pink-500/10", border: "hover:border-pink-500/30", activeBorder: "border-pink-500" },
+    { id: 2, name: "Future", icon: <BrainCircuit className="w-6 h-6" />, color: "text-purple-400", bg: "bg-purple-500/10", border: "hover:border-purple-500/30", activeBorder: "border-purple-500" }
+  ];
 
-        <div className="space-y-12">
-          <div className="flex items-center space-x-4 border-b border-white/5 pb-4">
-            <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-pink-400">Business</h3>
-          </div>
-          <div className="space-y-10">
-            {[
-              { title: "Security & Compliance", desc: "Proactive threat defense and compliance for scaling teams." },
-              { title: "Cloud Architecture", desc: "Transition your legacy systems to robust Azure/AWS environments." },
-              { title: "Proactive Defense", desc: "Proactive threat defense and compliance for scaling teams." }
-            ].map((item, i) => (
-              <div key={i} className="group relative pl-8 py-2">
-                <div className="absolute left-0 top-0 h-full w-px bg-zinc-800 group-hover:bg-pink-400 transition-colors"></div>
-                <h4 className="font-bold text-xl mb-3 group-hover:text-pink-100 transition-colors tracking-tight">{item.title}</h4>
-                <p className="text-zinc-500 text-lg leading-[1.7] tracking-wide font-light">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-const PillarTwo = () => (
-  <section id="pillar-2" className="py-32 px-6">
-    <div className="max-w-6xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
-        <div>
-          <div className="pillar-title mb-6">PILLAR 02: HEART</div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight leading-tight">Strategic Empowerment</h2>
-          <p className="text-xl text-zinc-400 mb-12 leading-[1.8] font-light tracking-wide">
-            Technology only works if people can use it confidently. We don't just provide tools; we amplify your ability to use them.
-          </p>
-          <div className="grid grid-cols-1 gap-6">
-            {[
-              "AI Literacy and real world use-cases",
-              "Practical training and enablement",
-              "Clear documentation and SOPs"
-            ].map((item, i) => (
-              <button key={i} className="btn-focus flex items-center space-x-5 group p-5 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/10 active:bg-white/[0.06] text-left transition-all">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-                  <ChevronRight className="w-4 h-4" />
+  return (
+    <section id="pillars-nav" className="py-20 px-6 border-t border-white/5 bg-[#080808]/50">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col items-center mb-16">
+          <div className="flex justify-center items-center space-x-6 md:space-x-12">
+            {pillars.map((p) => (
+              <button
+                key={p.id}
+                onMouseEnter={() => setActivePillar(p.id)}
+                onClick={() => setActivePillar(p.id)}
+                className={`group flex flex-col items-center space-y-4 transition-all duration-500 p-6 rounded-[2rem] border ${activePillar === p.id ? `${p.activeBorder} bg-white/[0.03]` : `border-transparent hover:bg-white/[0.02]`}`}
+              >
+                <div className={`w-14 h-14 rounded-2xl ${p.bg} flex items-center justify-center ${p.color} transition-transform duration-500 ${activePillar === p.id ? 'scale-110 shadow-lg' : 'group-hover:scale-105 opacity-60 group-hover:opacity-100'}`}>
+                  {p.icon}
                 </div>
-                <span className="text-zinc-300 font-medium text-lg tracking-wide">{item}</span>
+                <span className={`text-[10px] font-bold tracking-[0.3em] uppercase transition-colors duration-500 ${activePillar === p.id ? 'text-white' : 'text-zinc-600 group-hover:text-zinc-400'}`}>
+                  {p.name}
+                </span>
               </button>
             ))}
           </div>
         </div>
-        <div className="relative group">
-          <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 to-pink-500/10 rounded-[40px] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-          <div className="relative glass p-12 md:p-16 rounded-[40px] border-white/10 overflow-hidden hover:border-white/20 transition-all duration-700">
-            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-1000 rotate-12">
-              <Heart className="w-48 h-48" />
-            </div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-8">
-                <Zap className="w-6 h-6 text-pink-400" />
-              </div>
-              <p className="text-2xl md:text-3xl leading-[1.6] text-zinc-200 font-light italic font-serif">
-                Exclusive training resources, workshops, corporate trainings and individual coaching that builds real understanding.
+
+        <div className="relative min-h-[600px]">
+          {/* Pillar 0: Foundation */}
+          <div className={`transition-all duration-700 absolute inset-0 ${activePillar === 0 ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
+            <div className="mb-20 text-center md:text-left">
+              <div className="pillar-title revealed mb-6">PILLAR 01: FOUNDATION</div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">IT Support</h2>
+              <p className="text-xl md:text-2xl font-serif italic text-zinc-500 tracking-wide">Refined & Humanized</p>
+              <p className="text-lg text-zinc-400 max-w-2xl mt-8 leading-relaxed font-light tracking-wide">
+                Technical excellence for everyone. We eliminate friction so you can focus on what matters most.
               </p>
-              <div className="mt-12 flex items-center space-x-6">
-                <div className="flex -space-x-3">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className="w-10 h-10 rounded-full bg-zinc-900 border-2 border-zinc-950 flex items-center justify-center text-[10px] font-bold text-zinc-500 hover:text-white transition-colors cursor-default">
-                      0{i}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
+              <div className="space-y-12">
+                <div className="flex items-center space-x-4 border-b border-white/5 pb-4">
+                  <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-blue-400">Individual</h3>
+                </div>
+                <div className="space-y-10">
+                  {[
+                    { title: "Home Office Setup", desc: "Executive-level productivity environments for your residence." },
+                    { title: "Device Security", desc: "Protecting your personal data across mobile and desktop devices." },
+                    { title: "Personal IT Concierge", desc: "Direct access to technical assistance for any personal project." }
+                  ].map((item, i) => (
+                    <div key={i} className="group relative pl-8 py-2">
+                      <div className="absolute left-0 top-0 h-full w-px bg-zinc-800 group-hover:bg-blue-400 transition-colors"></div>
+                      <h4 className="font-bold text-xl mb-3 group-hover:text-blue-100 transition-colors tracking-tight">{item.title}</h4>
+                      <p className="text-zinc-500 text-lg leading-[1.7] tracking-wide font-light">{item.desc}</p>
                     </div>
                   ))}
                 </div>
-                <div className="h-px w-12 bg-zinc-800"></div>
-                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Enabling Mastery</span>
+              </div>
+              <div className="space-y-12">
+                <div className="flex items-center space-x-4 border-b border-white/5 pb-4">
+                  <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-pink-400">Business</h3>
+                </div>
+                <div className="space-y-10">
+                  {[
+                    { title: "Security & Compliance", desc: "Proactive threat defense and compliance for scaling teams." },
+                    { title: "Cloud Architecture", desc: "Transition your legacy systems to robust Azure/AWS environments." },
+                    { title: "Proactive Defense", desc: "Managed detection and response to keep your operations running." }
+                  ].map((item, i) => (
+                    <div key={i} className="group relative pl-8 py-2">
+                      <div className="absolute left-0 top-0 h-full w-px bg-zinc-800 group-hover:bg-pink-400 transition-colors"></div>
+                      <h4 className="font-bold text-xl mb-3 group-hover:text-pink-100 transition-colors tracking-tight">{item.title}</h4>
+                      <p className="text-zinc-500 text-lg leading-[1.7] tracking-wide font-light">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-);
 
-const PillarThree = ({ scrollY }: { scrollY: number }) => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [offset, setOffset] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        const isInView = rect.top < window.innerHeight && rect.bottom > 0;
-        if (isInView) {
-          setOffset((window.innerHeight - rect.top) * 0.1);
-        }
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  return (
-    <section id="pillar-3" ref={sectionRef} className="py-40 px-6 bg-zinc-950 relative overflow-hidden">
-      <div 
-        className="parallax-element absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[100px] pointer-events-none"
-        style={{ transform: `translateY(${offset * -0.5}px)` }}
-      ></div>
-      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-blue-900/5 to-transparent opacity-50"></div>
-      
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="pillar-title mb-6 text-center md:text-left">PILLAR 03: FUTURE</div>
-        <h2 className="text-4xl md:text-6xl font-bold mb-16 text-center md:text-left tracking-tight">Intelligent Systems</h2>
-        
-        <div className="mb-24 text-center">
-          <blockquote className="text-3xl md:text-5xl font-serif italic mb-10 leading-[1.5] text-zinc-300 max-w-4xl mx-auto tracking-wide">
-            “Our value is not in our ability to be a machine, but in our ability to be a human.”
-          </blockquote>
-          <div className="flex items-center justify-center space-x-4">
-            <div className="h-px w-8 bg-zinc-800"></div>
-            <cite className="text-zinc-500 font-bold uppercase tracking-[0.4em] text-xs">Deepak Chopra</cite>
-            <div className="h-px w-8 bg-zinc-800"></div>
-          </div>
-        </div>
-
-        <div className="glass p-10 md:p-20 rounded-[48px] border-white/10 relative overflow-hidden group hover:border-white/20 transition-all duration-1000">
-          <h3 className="text-2xl md:text-3xl font-bold mb-12 text-zinc-100 uppercase tracking-widest leading-relaxed max-w-2xl">
-            Applied intelligence that actually works in real systems and real businesses, with real people.
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mt-16 pt-16 border-t border-white/5">
-            <div className="flex flex-col group/item">
-              <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover/item:scale-110 group-hover/item:bg-blue-500/20 transition-all">
-                <Settings className="w-7 h-7 text-blue-400" />
+          {/* Pillar 1: Heart */}
+          <div className={`transition-all duration-700 absolute inset-0 ${activePillar === 1 ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+              <div className="pt-8">
+                <div className="pillar-title revealed mb-6">PILLAR 02: HEART</div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight leading-tight">Strategic Empowerment</h2>
+                <p className="text-xl text-zinc-400 mb-12 leading-[1.8] font-light tracking-wide">
+                  Technology only works if people can use it confidently. We don't just provide tools; we amplify your ability to use them.
+                </p>
+                <div className="grid grid-cols-1 gap-6">
+                  {[
+                    "AI Literacy and real world use-cases",
+                    "Practical training and enablement",
+                    "Clear documentation and SOPs"
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center space-x-5 group p-5 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all">
+                      <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+                        <ChevronRight className="w-4 h-4" />
+                      </div>
+                      <span className="text-zinc-300 font-medium text-lg tracking-wide">{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <h4 className="text-xl font-bold mb-5 uppercase tracking-widest text-white group-hover/item:text-blue-200 transition-colors">For individuals</h4>
-              <p className="text-zinc-400 leading-[1.8] text-lg font-light tracking-wide">
-                We look at how you manage your life— tasks, reminders, paperwork, schedules…and make it simpler using smart automation.
-              </p>
+              <div className="relative group mt-8">
+                <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 to-pink-500/10 rounded-[40px] blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+                <div className="relative glass p-10 md:p-14 rounded-[40px] border-white/10">
+                  <div className="w-12 h-12 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-8">
+                    <Zap className="w-6 h-6 text-pink-400" />
+                  </div>
+                  <p className="text-xl md:text-2xl leading-[1.6] text-zinc-200 font-light italic font-serif">
+                    Exclusive training resources, workshops, corporate trainings and individual coaching that builds real understanding.
+                  </p>
+                  <div className="mt-12 flex items-center space-x-6">
+                    <div className="flex -space-x-3">
+                      {[1,2,3,4].map(i => (
+                        <div key={i} className="w-10 h-10 rounded-full bg-zinc-900 border-2 border-zinc-950 flex items-center justify-center text-[10px] font-bold text-zinc-500">
+                          0{i}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="h-px w-12 bg-zinc-800"></div>
+                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Enabling Mastery</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <div className="flex flex-col group/item">
-              <div className="w-14 h-14 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover/item:scale-110 group-hover/item:bg-pink-500/20 transition-all">
-                <Cpu className="w-7 h-7 text-pink-400" />
+          </div>
+
+          {/* Pillar 2: Future */}
+          <div className={`transition-all duration-700 absolute inset-0 ${activePillar === 2 ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
+            <div className="max-w-4xl mx-auto text-center md:text-left">
+              <div className="pillar-title revealed mb-6">PILLAR 03: FUTURE</div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-16 tracking-tight">Intelligent Systems</h2>
+              
+              <div className="mb-20 text-center">
+                <blockquote className="text-2xl md:text-4xl font-serif italic mb-8 leading-[1.5] text-zinc-300 tracking-wide">
+                  “Our value is not in our ability to be a machine, but in our ability to be a human.”
+                </blockquote>
+                <div className="flex items-center justify-center space-x-4">
+                  <div className="h-px w-8 bg-zinc-800"></div>
+                  <cite className="text-zinc-500 font-bold uppercase tracking-[0.4em] text-[10px]">Deepak Chopra</cite>
+                  <div className="h-px w-8 bg-zinc-800"></div>
+                </div>
               </div>
-              <h4 className="text-xl font-bold mb-5 uppercase tracking-widest text-white group-hover/item:text-pink-200 transition-colors">For businesses</h4>
-              <p className="text-zinc-400 leading-[1.8] text-lg font-light tracking-wide">
-                We map workflows, systems, and data flows to translate operational complexity into intelligent, scalable systems.
-              </p>
+
+              <div className="glass p-10 md:p-16 rounded-[40px] border-white/10 relative overflow-hidden group">
+                <h3 className="text-xl md:text-2xl font-bold mb-12 text-zinc-100 uppercase tracking-widest leading-relaxed">
+                  Applied intelligence that actually works in real systems and real businesses, with real people.
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 pt-12 border-t border-white/5">
+                  <div className="flex flex-col">
+                    <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
+                      <Settings className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <h4 className="text-lg font-bold mb-4 uppercase tracking-widest text-white">For individuals</h4>
+                    <p className="text-zinc-400 leading-[1.7] text-base font-light tracking-wide">
+                      We look at how you manage your life— tasks, reminders, paperwork, schedules…and make it simpler using smart automation.
+                    </p>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6">
+                      <Cpu className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <h4 className="text-lg font-bold mb-4 uppercase tracking-widest text-white">For businesses</h4>
+                    <p className="text-zinc-400 leading-[1.7] text-base font-light tracking-wide">
+                      We map workflows, systems, and data flows to translate operational complexity into intelligent, scalable systems.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -533,6 +531,7 @@ const Footer = ({ onHomeClick, onContactClick }: { onHomeClick: () => void, onCo
 const App = () => {
   const [scrollY, setScrollY] = useState(0);
   const [currentView, setCurrentView] = useState<'landing' | 'contact'>('landing');
+  const [activePillar, setActivePillar] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -572,16 +571,21 @@ const App = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const onPillarClick = (id: number) => {
+    if (currentView !== 'landing') setCurrentView('landing');
+    setActivePillar(id);
+    const el = document.getElementById('pillars-nav');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen selection:bg-blue-500/30 bg-[#050505]">
-      <Navbar onContactClick={navigateToContact} onHomeClick={navigateToHome} />
+      <Navbar onContactClick={navigateToContact} onHomeClick={navigateToHome} onPillarClick={onPillarClick} />
       
       {currentView === 'landing' ? (
         <>
           <Hero scrollY={scrollY} onContactClick={navigateToContact} />
-          <PillarOne />
-          <PillarTwo />
-          <PillarThree scrollY={scrollY} />
+          <PillarNavigation activePillar={activePillar} setActivePillar={setActivePillar} />
         </>
       ) : (
         <ContactPage />
